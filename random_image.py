@@ -116,11 +116,11 @@ class Ellipse(RandomImage):
 
     def _draw(self, image_draw, color):
         """
-        Protected method that calls the right PILLOW method
+        Protected method that calls PILLOW method ImageDraw.Draw.ellipse
 
         :param image_draw: PILLOW ImageDraw.Draw object
         :param color: ellipse color (see PILLOW documentation)
-        :return:
+        :return: None
         """
         image_draw.ellipse(self.box, fill=color, outline=color)
 
@@ -163,3 +163,61 @@ class Circle(Ellipse):
         box = np.hstack((p, p + s))
         box[:, 0], box[:, 1] = box[:, 0] * self.size[0], box[:, 1] * self.size[1]
         return tuple(box[:, 0].astype(int)) + tuple(box[:, 1].astype(int))
+
+
+class Rectangle(Ellipse):
+    """
+    Class to generate image with randomly drawn rectangle
+    """
+
+    def __init__(self, size, mode='RGB'):
+        """
+        :param size: image size (width, height) in pixels (see PILLOW documentation)
+        :param mode: 'RGB' (default), 'L' (8 bit) or '1' (1 bit) (see PILLOW documentation)
+        """
+        super().__init__(size, mode)
+        self.vertices = None  # coordinates of vertices
+
+    def _draw(self, image_draw, color):
+        """
+        Protected method that calls PILLOW method ImageDraw.Draw.polygon
+
+        :param image_draw: PILLOW ImageDraw.Draw object
+        :param color: rectangle color (see PILLOW documentation)
+        :return: None
+        """
+        self.vertices = list(zip(*self.box_to_coord()))
+        image_draw.polygon(self.vertices, fill=color, outline=color)
+
+
+class Square(Rectangle, Circle):
+    """
+    Class to generate image with randomly drawn square
+    """
+
+    def __init__(self, size, mode='RGB'):
+        """
+        :param size: image size (width, height) in pixels (see PILLOW documentation)
+        :param mode: 'RGB' (default), 'L' (8 bit) or '1' (1 bit) (see PILLOW documentation)
+        """
+        super().__init__(size, mode)
+
+    def _random_box(self):
+        """
+        Create square randomly
+        The square is defined by the coordinates of lower left corner (llc) and upper right corner (urc)
+        The coordinates are expressed in pixels
+
+        :return: tuple (x_llc, y_llc, x_urc, y_urc)
+        """
+        return Circle._random_box(self)
+
+    def _draw(self, image_draw, color):
+        """
+        Protected method that calls PILLOW method ImageDraw.Draw.polygon
+
+        :param image_draw: PILLOW ImageDraw.Draw object
+        :param color: square color (see PILLOW documentation)
+        :return: None
+        """
+        Rectangle._draw(self, image_draw, color)
