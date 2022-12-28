@@ -29,7 +29,7 @@ class RandomImage:
                     color is RGB tuple or color string if self.mode is 'RGB'
                     color is an integer otherwise
                     if color is None the background color is chosen randomly
-        :return: PILLOW Image object
+        :return: self
         """
         if color is not None:
             try:
@@ -39,7 +39,7 @@ class RandomImage:
         else:
             color_matrix = np.random.randint(0, self._max_value, self._full_size, dtype=self._dtype)
             self.image = Image.fromarray(color_matrix)
-        return self.image
+        return self
 
     def to_array(self):
         """
@@ -101,7 +101,7 @@ class Ellipse(RandomImage):
                     color is an RGB tuple or color string if self.mode is 'RGB'
                     color is an integer otherwise
                     if color is None, then the color is chosen randomly
-        :return: PILLOW image object
+        :return: self
         """
         self.box = self._random_box() if box is None else tuple(box)
         image_draw = ImageDraw.Draw(self.image)
@@ -113,7 +113,7 @@ class Ellipse(RandomImage):
                 self._draw(image_draw, color)
             except:
                 self._draw(image_draw, tuple(color))
-        return self.image
+        return self
 
     def _draw(self, image_draw, color):
         """
