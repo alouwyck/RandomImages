@@ -133,3 +133,33 @@ class Ellipse(RandomImage):
         # returns coordinates (x, y) of bounding box vertices
         box = np.array(self.box)
         return box[[0, 0, 2, 2, 0]], box[[1, 3, 3, 1, 1]]
+
+
+class Circle(Ellipse):
+    """
+    Class to generate image with randomly drawn circle
+    """
+
+    def __init__(self, size, mode='RGB'):
+        """
+        :param size: image size (width, height) in pixels (see PILLOW documentation)
+        :param mode: 'RGB' (default), 'L' (8 bit) or '1' (1 bit) (see PILLOW documentation)
+        """
+        super().__init__(size, mode)
+
+    def _random_box(self):
+        """
+        Create bounding square of circle randomly
+        The square is defined by the coordinates of lower left corner (llc) and upper right corner (urc)
+        The coordinates are expressed in pixels
+
+        :return: tuple (x_llc, y_llc, x_urc, y_urc)
+        """
+        p = np.random.rand(2, 1)
+        s = np.random.rand(1)
+        while (s < self.min_width) or np.any(p + s > 1):
+            p = np.random.rand(2, 1)
+            s = np.random.rand(1)
+        box = np.hstack((p, p + s))
+        box[:, 0], box[:, 1] = box[:, 0] * self.size[0], box[:, 1] * self.size[1]
+        return tuple(box[:, 0].astype(int)) + tuple(box[:, 1].astype(int))
