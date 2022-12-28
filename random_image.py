@@ -41,13 +41,18 @@ class RandomImage:
             self.image = Image.fromarray(color_matrix)
         return self
 
-    def to_array(self):
+    def to_array(self, normalize=True):
         """
         Convert image into numpy array
 
+        :param normalize: boolean indicating whether uint8 values must be normalized (default) or not
         :return: numpy array
         """
-        return np.array(self.image)
+        arr = np.array(self.image)
+        if not normalize or self.mode == '1':
+            return arr
+        else:
+            return arr / (self._max_value - 1)
 
     def save(self, filename, format='PNG'):
         """
