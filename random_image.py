@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image, ImageDraw
+from polygenerator import random_convex_polygon
 
 
 class RandomImage:
@@ -221,3 +222,36 @@ class Square(Rectangle, Circle):
         :return: None
         """
         Rectangle._draw(self, image_draw, color)
+
+
+class Polygon(Rectangle):
+    """
+    Class to generate image with randomly drawn convex polygon
+    """
+
+    def __init__(self, size, n, mode='RGB'):
+        """
+        :param size: image size (width, height) in pixels (see PILLOW documentation)
+        :param n: integer indicating the number of vertices
+        :param mode: 'RGB' (default), 'L' (8 bit) or '1' (1 bit) (see PILLOW documentation)
+        """
+        super().__init__(size, mode)
+        self.n = n
+
+    def _draw(self, image_draw, color):
+        """
+        Protected method that calls PILLOW method ImageDraw.Draw.polygon
+        and uses function polygenerator.random_convex_polygon to create a random polygon
+
+        :param image_draw: PILLOW ImageDraw.Draw object
+        :param color: square color (see PILLOW documentation)
+        :return: None
+        """
+        if self.vertices is None:
+            p = random_convex_polygon(self.n)
+            p.append(p[0])
+            scale_x = lambda x: self.box[0] + x * (self.box[2] - self.box[0])
+            scale_y = lambda y: self.box[1] + y * (self.box[3] - self.box[1])
+            self.vertices = [(scale_x(x), scale_y(y)) for (x, y) in p]
+        image_draw.polygon(self.vertices, fill=color, outline=color)
+
