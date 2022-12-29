@@ -260,3 +260,16 @@ class Polygon(Rectangle):
             self.vertices = [(scale_x(x), scale_y(y)) for (x, y) in p]
         image_draw.polygon(self.vertices, fill=color, outline=color)
 
+
+class Triangle(Polygon):
+    """
+    Class to generate image with randomly drawn triangle
+    """
+
+    def __init__(self, size, mode='RGB'):
+        """
+        :param size: image size (width, height) in pixels (see PILLOW documentation)
+        :param n: integer indicating the number of vertices
+        :param mode: 'RGB' (default), 'L' (8 bit) or '1' (1 bit) (see PILLOW documentation)
+        """
+        super().__init__(size, n=3, mode=mode)
